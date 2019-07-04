@@ -9,7 +9,9 @@ app.use((req,res,next)=>{
     return next();
 });
 
-http.listen(process.env.SERVER_PORT, function() {
+var porta = process.env.PORT || 8080;
+
+http.listen(porta, function() {
     console.log("Servidor Ativo!");
 });
 
