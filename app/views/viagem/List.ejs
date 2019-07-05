@@ -95,15 +95,19 @@
 											<td><%= itens[i].fone %></td>
 											<% switch (itens[i].status) {
 												case 'SOLICITADO' : %>
-													<td style="background: green;color: white"><%= itens[i].status %></td>
-													<% break;
-
-												case 'AGUARDANDO' : %>
 													<td style="background: blue;color: white"><%= itens[i].status %></td>
 													<% break;
 
+												case 'AGUARDANDO' : %>
+													<td style="background: yellow;color: white"><%= itens[i].status %></td>
+													<% break;
+
 												case 'EM_VIAGEM' : %>
-													<td style="background: grey;color: white"><%= itens[i].status %></td>
+													<td style="background: white;color: black"><%= itens[i].status %></td>
+													<% break;
+													
+												case 'FINALIZADO' : %>
+													<td style="background: green;color: white"><%= itens[i].status %></td>
 													<% break;
 
 												case 'CANCELADO' : %>
