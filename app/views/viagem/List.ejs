@@ -93,7 +93,25 @@
                                             <td><%= itens[i].dataSolicitacao %></td>
 											<td><%= itens[i].cliente %></td>
 											<td><%= itens[i].fone %></td>
-											<td><%= itens[i].status %></td>
+											<% switch (itens[i].status) {
+												case 'SOLICITADO' : %>
+													<td style="backgroung: green;"><%= itens[i].status %></td>
+													<% break;
+
+												case 'AGUARDANDO' : %>
+													<td style="backgroung: blue;"><%= itens[i].status %></td>
+													<% break;
+
+												case 'EM_VIAGEM' : %>
+													<td style="backgroung: grey;"><%= itens[i].status %></td>
+													<% break;
+
+												case 'CANCELADO' : %>
+													<td style="backgroung: red;"><%= itens[i].status %></td>
+													<% break;
+
+											} %>
+								
 											<td>
 												<a href="/app/<%= page %>/response/<%= itens[i].id %>"
 													class="btn btn-warning btn-circle btn-sm">
