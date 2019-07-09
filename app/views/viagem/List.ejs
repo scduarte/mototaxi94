@@ -197,8 +197,7 @@
 	<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
 	<!-- Page level custom scripts -->
-	<script src="/js/demo/datatables-demo.js"></script>
-
+	<!-- <script src="/js/demo/datatables-demo.js"></script> -->
 	<script>
 		var socket = io('https://motosocketio.herokuapp.com');
         socket.on('new_trip',function(data){
@@ -247,6 +246,28 @@
                     }
             }); */
         });
+
+		$(document).ready(function() {
+			$('#dataTable').DataTable({
+				"order": [[0, "desc"]],
+				"language": {
+						"lengthMenu": "Visualizar _MENU_ registros por página",
+						"zeroRecords": "Nada encontrado - desculpe",
+						"info": "Visualizando página _PAGE_ de _PAGES_",
+						"infoEmpty": "Nenhum registro disponível",
+						"infoFiltered": "(filtrado de _MAX_ registros totais)",
+						"search": "Pesquisar",
+						"next" : "Próxima",
+						"dataTable_previous": "Anterior",
+						"oPaginate": {
+							"sNext": "Próximo",
+							"sPrevious": "Anterior",
+							"sFirst": "Primeiro",
+							"sLast": "Último"
+						},
+				}
+			});
+		});
 	</script>
 
 </body>
