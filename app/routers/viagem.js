@@ -40,7 +40,7 @@ module.exports = async function(app) {
                         cliente: body.dados[i].cliente.nome,
                         fone: body.dados[i].cliente.username,
                         status: body.dados[i].status,
-                        dataSolicitacao: data(body.dados[i].dataSolicitacao)
+                        dataSolicitacao: formatDate(body.dados[i].dataSolicitacao)
                     };
                     lista.push(finallista);
                 }
@@ -56,15 +56,35 @@ module.exports = async function(app) {
         }
     });
 
-    function data(data) {
-        let dataTratada = S(data).strip('T', 'Z').s;
-        let dataTratada2 = S(dataTratada).left(10).s;
-        let dataTratada3 = S(dataTratada2).splitLeft('-');
-        let dataTratada4 = dataTratada3[2] + "/" + dataTratada3[1] + "/" + dataTratada3[0];
-        let horaTradada = S(dataTratada).right(12).s;
-        horaTradada = S(horaTradada).left(8).s;
-        return dataTratada4 + " " + horaTradada
-    };
+//     function data(data) {
+//         let dataTratada = S(data).strip('T', 'Z').s;
+//         let dataTratada2 = S(dataTratada).left(10).s;
+//         let dataTratada3 = S(dataTratada2).splitLeft('-');
+//         let dataTratada4 = dataTratada3[2] + "/" + dataTratada3[1] + "/" + dataTratada3[0];
+//         let horaTradada = S(dataTratada).right(12).s;
+//         horaTradada = S(horaTradada).left(8).s;
+//         return dataTratada4 + " " + horaTradada
+//     };
+    
+    function formatDate(dateTime){
+        var date = new Date(dateTime);
+
+        var dia = date.getDate();
+        var mes = date.getMonth()+1;
+        var ano = date.getFullYear();
+
+        var horas = date.getUTCHours();
+        var minutos = date.getMinutes();
+        var segundos = date.getSeconds();
+
+        if(horas < 10){horas = "0"+horas}
+        if(minutos < 10){minutos = "0"+minutos}
+        if(segundos < 10){segundos = "0"+segundos}
+
+        var data = dia+"/"+mes+"/"+ano+"  "+horas+":"+minutos+":"+segundos;
+        
+        return data;
+    }
 
     // Rota para receber parametros via post criar item
     app.post('/app/' + rota + '/create/submit', function(req, res) {
