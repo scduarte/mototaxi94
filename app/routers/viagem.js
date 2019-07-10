@@ -69,7 +69,6 @@ module.exports = async function(app) {
     function formatDate(dateTime){
         var date = new Date(dateTime);
 
-        var dia = date.getDate();
         var mes = date.getMonth()+1;
         var ano = date.getFullYear();
 
@@ -77,6 +76,7 @@ module.exports = async function(app) {
         var minutos = date.getMinutes();
         var segundos = date.getSeconds();
 
+        if(mes < 10){mes = "0"+mes}
         if(horas < 10){horas = "0"+horas}
         if(minutos < 10){minutos = "0"+minutos}
         if(segundos < 10){segundos = "0"+segundos}
