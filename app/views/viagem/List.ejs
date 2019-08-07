@@ -68,7 +68,7 @@
 
 						<div class="card-body">
 							<div class="table-responsive">
-								<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+								<table class="table table-bordered" id="" width="100%" cellspacing="0">
 									<thead>
 										<tr>
                                             <th>Data</th>
@@ -135,6 +135,16 @@
 										<% } %>
 									</tbody>
 								</table>
+								<nav aria-label="navigation">
+									<ul class="pagination justify-content-end">
+										<li id="page-anterior" data-page="0"  class="page-item disabled">
+											<a class="page-link" href="javascript:void(0);">Anterior</a>
+										</li>
+										<li id="page-posterior" data-page="2" class="page-item">
+											<a class="page-link" href="javascript:void(0);">Próxima</a>
+										</li>
+									</ul>
+								</nav>
 							</div>
 						</div>
 					</div>
@@ -205,14 +215,46 @@
             if(data.id =! null && data.id != ""){
                 window.location.reload(true);
             }
-            
-            //$('#dataTable').DataTable().destroy();
-            //console.log(data);
-           /* var tr = '<tr>'+
+        }); 
+		
+		$('#page-posterior').click(function(){
+			var page = $(this).attr('data-page');
+			var pageAnterior = $("#page-anterior").attr('data-page');
+
+			$.post('list', {"page": page}).done(function(response){
+				
+				var tr = "";
+
+				response.itens.forEach(function(data){
+					var background = "";
+
+					switch(data.status){
+						case 'SOLICITADO' :
+							background = 'style="background: blue;color: white"';
+							break;
+						
+						case 'ATENDIDO' :
+							background = 'style="background: orange;color: white"';
+							break;
+
+						case 'AGUARDANDO' :
+							background = 'style="background: yellow;color: white"';
+							break;
+
+						case 'EM_VIAGEM' :
+							background = 'style="background: grey;color: white"';
+							break;
+
+						case 'CANCELADO' :
+							background = 'style="background: red;color: white"';
+							break;
+					}
+
+					tr += '<tr>'+
                         '<td>'+data.dataSolicitacao+'</td>'+
                         '<td>'+data.cliente+'</td>'+
                         '<td>'+data.fone+'</td>'+
-                        '<td>'+data.status+'</td>'+
+                        '<td '+ background +'>'+data.status+'</td>'+
                         '<td>'+
                             '<a href="/app/<%= page %>/response/'+data.id+'" class="btn btn-warning btn-circle btn-sm">'+
                                 '<i class="fas fa-edit"></i>'+
@@ -224,28 +266,85 @@
                             '</a>'+
                         '</td>'+
                     '</tr>';
+				});	
 
-            $('#table_body').prepend(tr);
-            
-            $('#dataTable').DataTable({
-                "language": {
-                        "lengthMenu": "Visualizar _MENU_ registros por página",
-                        "zeroRecords": "Nada encontrado - desculpe",
-                        "info": "Visualizando página _PAGE_ de _PAGES_",
-                        "infoEmpty": "Nenhum registro disponível",
-                        "infoFiltered": "(filtrado de _MAX_ registros totais)",
-                        "search": "Pesquisar",
-                        "next" : "Próxima",
-                        "dataTable_previous": "Anterior",
-                        "oPaginate": {
-                            "sNext": "Próximo",
-                            "sPrevious": "Anterior",
-                            "sFirst": "Primeiro",
-                            "sLast": "Último"
-                        },
-                    }
-            }); */
-        }); 
+            $('#table_body').html(tr);
+				
+				if(page < response.totalPages){
+					$("#page-posterior").attr('data-page', parseInt(response.number) + 1);
+					$("#page-anterior").attr('data-page', parseInt(pageAnterior) + 1).removeClass('disabled');
+				}else{
+					$("#page-posterior").addClass('disabled');
+				}
+
+			})
+		});
+
+		$('#page-anterior').click(function(){
+			var pagePosterior = $('#page-posterior').attr('data-page');
+			var pageAnterior = $("#page-anterior").attr('data-page');
+
+			if(pageAnterior > 0){
+				$.post('list', {"page": pageAnterior}).done(function(response){
+				
+				var tr = "";
+
+				response.itens.forEach(function(data){
+					var background = "";
+
+					switch(data.status){
+						case 'SOLICITADO' :
+							background = 'style="background: blue;color: white"';
+							break;
+						
+						case 'ATENDIDO' :
+							background = 'style="background: orange;color: white"';
+							break;
+
+						case 'AGUARDANDO' :
+							background = 'style="background: yellow;color: white"';
+							break;
+
+						case 'EM_VIAGEM' :
+							background = 'style="background: grey;color: white"';
+							break;
+
+						case 'CANCELADO' :
+							background = 'style="background: red;color: white"';
+							break;
+					}
+
+					tr += '<tr>'+
+                        '<td>'+data.dataSolicitacao+'</td>'+
+                        '<td>'+data.cliente+'</td>'+
+                        '<td>'+data.fone+'</td>'+
+                        '<td '+ background +'>'+data.status+'</td>'+
+                        '<td>'+
+                            '<a href="/app/<%= page %>/response/'+data.id+'" class="btn btn-warning btn-circle btn-sm">'+
+                                '<i class="fas fa-edit"></i>'+
+                            '</a>'+
+                            '<a href="#" class="btn btn-danger btn-circle btn-sm" data-toggle="modal"'+
+                                'data-target="#logoutModal"'+
+                                'onclick="setaDadosModal('+data.id+')">'+
+                                '<i class="far fa-trash-alt"></i>'+
+                            '</a>'+
+                        '</td>'+
+                    '</tr>';
+				});	
+
+            $('#table_body').html(tr);
+				
+				if(pageAnterior == 1){
+					$("#page-anterior").attr('data-page', parseInt(pageAnterior) - 1).addClass('disabled');
+				}else{
+					$("#page-anterior").attr('data-page', parseInt(pageAnterior) - 1);
+				}
+				
+				$("#page-posterior").attr('data-page', parseInt(pagePosterior) - 1);
+
+			});
+			}
+		});
 
 		$(document).ready(function() {
 			$('#dataTable').DataTable({

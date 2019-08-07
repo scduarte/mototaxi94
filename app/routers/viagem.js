@@ -25,7 +25,7 @@ module.exports = async function(app) {
         } else {
 
             teste = request({
-                url: process.env.API_HOST + rota,
+                url: process.env.API_HOST + rota + "/1/10",
                 method: "GET",
                 json: true,
                 headers: {
@@ -34,23 +34,67 @@ module.exports = async function(app) {
                 },
             }, function(error, response, body) {
                 lista = [];
-                for (var i = 0; i < Object.keys(body.dados).length; i++) {
+                for (var i = 0; i < Object.keys(body.dados.content).length; i++) {
                     const finallista = {
-                        id: body.dados[i].id,
-                        cliente: body.dados[i].cliente.nome,
-                        fone: body.dados[i].cliente.username,
-                        status: body.dados[i].status,
-                        dataSolicitacao: formatDate(body.dados[i].dataSolicitacao)
+                        id: body.dados.content[i].id,
+                        cliente: body.dados.content[i].cliente.nome,
+                        fone: body.dados.content[i].cliente.username,
+                        status: body.dados.content[i].status,
+                        dataSolicitacao: formatDate(body.dados.content[i].dataSolicitacao)
                     };
                     lista.push(finallista);
                 }
                 res.format({
                     html: function() {
-                        res.render(rota + '/List', { itens: lista, page: rota });
+                        res.render(rota + '/List', { 
+                            itens: lista, 
+                            page: rota,
+                            number: body.dados.number,
+                            totalPages: body.dados.totalPages 
+                        });
 
                     }
                 });
                 return lista;
+            });
+
+        }
+    });
+
+    app.post('/app/' + rota + '/list', function(req, res) {
+
+        if (!req.session.token) {
+            res.redirect('/app/login');
+        } else {
+
+            teste = request({
+                url: process.env.API_HOST + rota +"/"+req.body.page+"/10",
+                method: "GET",
+                json: true,
+                headers: {
+                    "content-type": "application/json",
+                    "Authorization": req.session.token
+                },
+            }, function(error, response, body) {
+                lista = [];
+                for (var i = 0; i < Object.keys(body.dados.content).length; i++) {
+                    const finallista = {
+                        id: body.dados.content[i].id,
+                        cliente: body.dados.content[i].cliente.nome,
+                        fone: body.dados.content[i].cliente.username,
+                        status: body.dados.content[i].status,
+                        dataSolicitacao: formatDate(body.dados.content[i].dataSolicitacao)
+                    };
+                    lista.push(finallista);
+                }
+                
+                return res.json({ 
+                    itens: lista, 
+                    page: rota,
+                    number: body.dados.number,
+                    totalPages: body.dados.totalPages 
+                });
+
             });
 
         }
